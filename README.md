@@ -2,8 +2,8 @@
 
 A wayfinding tool for disabled and elderly subway riders. It surfaces a
 station's real ADA accessibility status, shows elevator/escalator outages,
-and automatically suggests the nearest fully-accessible alternative station
-when the one you searched for isn't step-free.
+and automatically suggests the nearest fully accessible alternative station
+when the one you searched for isn't step free.
 
 Built around one fact: as of this dataset, only **32.7%** of NYC subway
 stations are fully ADA accessible (162 of 496). Most wayfinding apps treat
@@ -12,7 +12,7 @@ every station as equally reachable. This one doesn't.
 ## Data
 
 - **Station list + ADA status**: MTA Subway Stations dataset, `data.ny.gov`
-  (dataset id `39hk-dx4f`). Real, public, no fabricated values — 496 stations,
+  (dataset id `39hk-dx4f`). Real, public, no fabricated values 496 stations,
   cleaned into `data/stations_clean.json`. ADA codes: `0` not accessible,
   `1` fully accessible, `2` partially accessible (see each station's
   `ada_notes` for which direction/platform).
@@ -26,20 +26,20 @@ every station as equally reachable. This one doesn't.
 
 ## Architecture
 
-- `backend/accessibility.py` — pure-Python core logic: search, station
-  lookup, and a Haversine-distance nearest-accessible-station algorithm.
-  Zero dependencies, so it's unit-testable on its own.
-- `backend/app.py` — FastAPI wrapping that logic as a small REST API.
-- `backend/elevators.py` — elevator/outage status (sample data, real schema).
-- `frontend/` — a dependency-free single-page React app (React + Babel
+- `backend/accessibility.py`: pure Python core logic: search, station
+  lookup, and a Haversine distance nearest accessible station algorithm.
+  Zero dependencies, so it's unit testable on its own.
+- `backend/app.py`: FastAPI wrapping that logic as a small REST API.
+- `backend/elevators.py`: elevator/outage status (sample data, real schema).
+- `frontend/`: a dependency free single page React app (React + Babel
   loaded from CDN, no build step) that calls the API and renders results.
 
 ## Accessibility (the app practices what it's about)
 
 - Every status indicator pairs an icon + text label, never color alone
-  (colorblind-safe).
+  (colorblind safe).
 - Visible focus rings on every interactive element, full keyboard nav.
-- A skip-link to main content, ARIA live region announcing search-result
+- A skip link to main content, ARIA live region announcing search result
   counts and station selection for screen readers.
 - 44px minimum touch targets, AA-contrast color palette.
 

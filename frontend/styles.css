@@ -1,0 +1,299 @@
+/* NYC Transit Accessibility Navigator
+   Design principles followed throughout:
+   - WCAG AA contrast minimum (4.5:1 for body text)
+   - Status is never color-only: every badge pairs an icon + text label
+   - Visible focus rings on every interactive element (keyboard nav first-class)
+   - Generous touch targets (min 44px) for motor-impaired and elderly users
+   - Respects prefers-reduced-motion
+*/
+
+:root {
+  --color-bg: #ffffff;
+  --color-text: #1a1a1a;
+  --color-muted: #4d4d4d;
+  --color-accent: #0b3d91;       /* deep blue, AA-compliant on white */
+  --color-accent-dark: #062a66;
+  --color-border: #c7c7c7;
+
+  /* Status colors: each is ALSO paired with a distinct icon/text so this
+     palette is a reinforcement, not the only signal. Chosen to be
+     distinguishable under common red-green and blue-yellow color
+     vision deficiencies (avoid pure red/green pairing). */
+  --color-full: #0b6e4f;         /* teal-green */
+  --color-full-bg: #e6f4ef;
+  --color-partial: #8a5a00;      /* amber/brown, not orange-on-red */
+  --color-partial-bg: #fbf0db;
+  --color-none: #9b2226;         /* muted red */
+  --color-none-bg: #fbe9e9;
+
+  --focus-ring: 3px solid #0b3d91;
+  --radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Skip link: hidden until focused, then unmissable */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--color-accent);
+  color: #fff;
+  padding: 12px 20px;
+  z-index: 100;
+  border-radius: 0 0 var(--radius) 0;
+  font-weight: 600;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* Universal focus visibility — never remove this without replacing it */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+header h1 {
+  font-size: 1.75rem;
+  margin: 0 0 8px;
+  color: var(--color-accent-dark);
+}
+
+.tagline {
+  color: var(--color-muted);
+  max-width: 640px;
+  margin: 0 0 16px;
+}
+
+.summary-banner {
+  background: #f3f6fb;
+  border-left: 4px solid var(--color-accent);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin: 0 0 20px;
+}
+
+.api-error {
+  background: var(--color-none-bg);
+  color: var(--color-none);
+  border: 1px solid var(--color-none);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-weight: 600;
+}
+
+.search-box {
+  margin-bottom: 16px;
+}
+
+.search-box label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.search-box input {
+  width: 100%;
+  max-width: 480px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  min-height: 44px;
+}
+
+.search-box input:focus-visible {
+  border-color: var(--color-accent);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 760px) {
+  .layout {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.results-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.result-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  min-height: 44px;
+  text-align: left;
+  background: #fff;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.result-item:last-child {
+  border-bottom: none;
+}
+
+.result-item:hover {
+  background: #f5f7fa;
+}
+
+.result-item.selected {
+  background: #eaf0fb;
+  border-left: 4px solid var(--color-accent);
+}
+
+.result-name {
+  font-weight: 600;
+}
+
+.result-routes {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+/* Badges: icon + text + background, redundant on purpose */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.badge-full {
+  color: var(--color-full);
+  background: var(--color-full-bg);
+}
+
+.badge-partial {
+  color: var(--color-partial);
+  background: var(--color-partial-bg);
+}
+
+.badge-none {
+  color: var(--color-none);
+  background: var(--color-none-bg);
+}
+
+.station-detail {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.station-detail h2 {
+  margin-top: 0;
+  color: var(--color-accent-dark);
+}
+
+.sample-data-notice {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  background: #f5f5f5;
+  border-radius: var(--radius);
+  padding: 8px 12px;
+}
+
+.elevator-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+
+.elevator-list li {
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.elevator-list li.out-of-service {
+  border-color: var(--color-none);
+  background: var(--color-none-bg);
+}
+
+.elevator-list li.in-service {
+  border-color: var(--color-full);
+  background: var(--color-full-bg);
+}
+
+.alternatives {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.alternatives h3 {
+  margin-top: 0;
+}
+
+.alternatives ul {
+  padding-left: 20px;
+}
+
+footer {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
